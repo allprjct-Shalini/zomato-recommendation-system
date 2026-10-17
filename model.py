@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 def load_and_process_data():
     project_dir = Path(__file__).resolve().parent
-    csv_path = project_dir / "dataset" / "zomato.csv"
+    csv_path = project_dir / "dataset/zomato_small.csv"
     zip_path = project_dir / "dataset.zip"
 
     if csv_path.is_file():
@@ -19,7 +19,7 @@ def load_and_process_data():
         )
     elif zip_path.is_file():
         with ZipFile(zip_path) as archive:
-            with archive.open("dataset/zomato.csv") as dataset_file:
+            with archive.open("dataset/zomato_small.csv") as dataset_file:
                 zomato_real = pd.read_csv(
                     dataset_file, encoding='utf-8', engine='python', on_bad_lines='skip'
                 )
