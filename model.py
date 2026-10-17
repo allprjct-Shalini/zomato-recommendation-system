@@ -2,13 +2,31 @@ import pandas as pd
 import numpy as np
 import re
 import string
+from pathlib import Path
+from zipfile import ZipFile
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.preprocessing import MinMaxScaler
 
 def load_and_process_data():
-    # Load dataset
-    zomato_real = pd.read_csv("dataset/zomato.csv", encoding='utf-8', engine='python', on_bad_lines='skip')
+    project_dir = Path(__file__).resolve().parent
+    csv_path = project_dir / "dataset" / "zomato.csv"
+    zip_path = project_dir / "dataset.zip"
+
+    if csv_path.is_file():
+        zomato_real = pd.read_csv(
+            csv_path, encoding='utf-8', engine='python', on_bad_lines='skip'
+        )
+    elif zip_path.is_file():
+        with ZipFile(zip_path) as archive:
+            with archive.open("dataset/zomato.csv") as dataset_file:
+                zomato_real = pd.read_csv(
+                    dataset_file, encoding='utf-8', engine='python', on_bad_lines='skip'
+                )
+    else:
+        raise FileNotFoundError(
+            f"Restaurant data not found. Add either '{csv_path}' or '{zip_path}' to the project."
+        )
 
     # Data Cleaning
     zomato = zomato_real.drop(
